@@ -5,7 +5,6 @@ import (
 	"math"
 	"time"
 
-	"github.com/gopherjs/gopherjs/js"
 	"github.com/thoratou/go-phaser/generated/phaser"
 )
 
@@ -125,7 +124,6 @@ func (w *World) Create() {
 	w.backgroundMusic.SetVolumeA(1)
 	w.backgroundMusic.SetLoopA(true)
 	w.backgroundMusic.Play()
-	js.Global.Get("console").Call("log", w.backgroundMusic.Object)
 
 	fmt.Println("Music started")
 
