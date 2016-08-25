@@ -162,7 +162,7 @@ func (w *World) Create() {
 
 		human := phaser.Sprite{Object: w.humans.Create1O(x, y, "human").Object}
 		human.SetNameA(fmt.Sprintf("human%d", i))
-		body := &phaser.PhysicsArcadeBody{Object: human.Body().(*js.Object)}
+		body := phaser.ToPhysicsArcadeBody(human.Body())
 		body.SetCollideWorldBoundsA(true)
 		body.SetWidthA(30)
 		body.SetHeightA(50)
@@ -234,10 +234,10 @@ func (w *World) Update() {
 }
 
 func (w *World) HumanMutate(human *phaser.Sprite) {
-	zombie := &phaser.Sprite{Object: w.zombies.Create1O(human.X(), human.Y(), "zombie").Object}
+	zombie := phaser.ToSprite(w.zombies.Create1O(human.X(), human.Y(), "zombie").Object)
 	zombie.SetNameA(fmt.Sprintf("zombie%d", w.lastZombieNb))
 	w.lastZombieNb++
-	body := &phaser.PhysicsArcadeBody{Object: zombie.Body().(*js.Object)}
+	body := phaser.ToPhysicsArcadeBody(zombie.Body())
 	body.SetCollideWorldBoundsA(true)
 	body.SetWidthA(30)
 	body.SetHeightA(50)
@@ -261,7 +261,7 @@ func (w *World) GotToTarget(zombie *phaser.Sprite) {
 
 func (w *World) RandomMove(entity *phaser.Sprite) {
 	if Game().Time().Now()-entity.Get("lastmove").Int() > w.rng.Between(config.MIN_MOVE_TIME, config.MAX_MOVE_TIME) {
-		body := &phaser.PhysicsArcadeBody{Object: entity.Body().(*js.Object)}
+		body := phaser.ToPhysicsArcadeBody(entity.Body())
 		body.Velocity().SetTo1O(w.rng.Between(-1, 1)*w.mobSpeed, w.rng.Between(-1, 1)*w.mobSpeed)
 		entity.Set("lastmove", Game().Time().Now())
 	}
@@ -270,13 +270,13 @@ func (w *World) RandomMove(entity *phaser.Sprite) {
 func (w *World) Shoot(position *phaser.Point, direction int) {
 	if Game().Time().Now() > w.nextFire {
 		w.nextFire = Game().Time().Now() + config.FIRE_RATE
-		ball := &phaser.Sprite{Object: w.balls.GetFirstExists1O(false).Object} // get the first created fireball that no exists atm
+		ball := phaser.ToSprite(w.balls.GetFirstExists1O(false).Object) // get the first created fireball that no exists atm
 		if ball != nil {
 			ball.SetExistsA(true)
 			ball.SetLifespanA(2500)
 			Game().Physics().Enable1O(ball, Game().Physics().ARCADE())
 
-			body := &phaser.PhysicsArcadeBody{Object: ball.Body().(*js.Object)}
+			body := phaser.ToPhysicsArcadeBody(ball.Body())
 			if direction == config.UP {
 				ball.Reset(position.X(), position.Y()-config.FIRE_INIT_OFFSET)
 				body.Velocity().SetXA(0)
@@ -299,7 +299,7 @@ func (w *World) Shoot(position *phaser.Point, direction int) {
 }
 
 func DrawEntity(entity *phaser.Sprite) {
-	body := &phaser.PhysicsArcadeBody{Object: entity.Body().(*js.Object)}
+	body := phaser.ToPhysicsArcadeBody(entity.Body())
 	if math.Abs(float64(body.Velocity().X())) > math.Abs(float64(body.Velocity().Y())) {
 		if body.Velocity().X() > 0 {
 			entity.Animations().Play("walk-right")

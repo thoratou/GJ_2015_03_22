@@ -1,9 +1,6 @@
 package main
 
-import (
-	"github.com/gopherjs/gopherjs/js"
-	"github.com/thoratou/go-phaser/generated/phaser"
-)
+import "github.com/thoratou/go-phaser/generated/phaser"
 
 type Player struct {
 	World                  *World
@@ -23,7 +20,7 @@ func NewPlayer(world *World) *Player {
 	}
 
 	Game().Physics().Enable1O(player.Sprite, Game().Physics().ARCADE())
-	body := &phaser.PhysicsArcadeBody{Object: player.Sprite.Body().(*js.Object)}
+	body := phaser.ToPhysicsArcadeBody(player.Sprite.Body())
 	body.Bounce().SetToI(0.1, 0.1)
 	body.SetCollideWorldBoundsA(true)
 
@@ -47,7 +44,7 @@ func (p *Player) Damage() {
 }
 
 func (p *Player) Update() {
-	body := &phaser.PhysicsArcadeBody{Object: p.Sprite.Body().(*js.Object)}
+	body := phaser.ToPhysicsArcadeBody(p.Sprite.Body())
 	body.Velocity().SetXA(0)
 	body.Velocity().SetYA(0)
 	for direction := 0; direction < 4; direction++ {
